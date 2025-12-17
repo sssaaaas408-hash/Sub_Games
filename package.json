@@ -1,0 +1,21 @@
+{
+  "name": "subgames-onlinefix-api",
+  "version": "1.0.0",
+  "description": "API proxy para Online-Fix.me",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "start:puppeteer": "node server-puppeteer.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "axios": "^1.6.2",
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
+    "puppeteer": "^21.6.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

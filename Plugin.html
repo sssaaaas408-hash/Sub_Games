@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SubGames Plugin</title>
+    <link rel="icon" type="image/png" href="img/SubGames_curva.png">
+    <link rel="shortcut icon" type="image/png" href="img/SubGames_curva.png">
+    <link rel="apple-touch-icon" href="img/SubGames_curva.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --secondary-text: #8e8e93;
+            --input-bg: #f2f2f7;
+            --border-color: #d1d1d6;
+            --hover-bg: #e5e5ea;
+            --accent-color: #007aff;
+            --alpha-orange: #007aff;
+        }
+
+        body.dark-mode {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --secondary-text: #98989d;
+            --input-bg: #1c1c1e;
+            --border-color: #38383a;
+            --hover-bg: #2c2c2e;
+            --accent-color: #0a84ff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 0.5px solid var(--border-color);
+            backdrop-filter: blur(20px);
+            background: var(--bg-color);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .nav-desktop {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-desktop a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 400;
+            transition: opacity 0.2s;
+            opacity: 0.6;
+        }
+
+        .nav-desktop a:hover {
+            opacity: 1;
+        }
+
+        .nav-desktop a.active {
+            opacity: 1;
+            font-weight: 500;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .theme-toggle {
+            width: 51px;
+            height: 31px;
+            background: var(--input-bg);
+            border-radius: 16px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        .theme-toggle-slider {
+            width: 27px;
+            height: 27px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+
+        body.dark-mode .theme-toggle {
+            background: #34c759;
+        }
+
+        body.dark-mode .theme-toggle-slider {
+            transform: translateX(20px);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            width: 22px;
+            height: 2px;
+            background: var(--text-color);
+            transition: all 0.3s;
+            border-radius: 1px;
+        }
+
+        .nav-mobile {
+            display: none;
+            position: fixed;
+            top: 65px;
+            left: 0;
+            right: 0;
+            background: var(--bg-color);
+            border-bottom: 0.5px solid var(--border-color);
+            padding: 8px;
+            z-index: 1000;
+        }
+
+        .nav-mobile.active {
+            display: block;
+        }
+
+        .nav-mobile a {
+            display: block;
+            padding: 12px 16px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .nav-mobile a:hover {
+            background: var(--hover-bg);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 32px;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 40px;
+            height: fit-content;
+        }
+
+        .alpha-badge-large {
+            background: var(--input-bg);
+            border: 2px solid var(--accent-color);
+            color: var(--text-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .alpha-badge-large h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .alpha-badge-large p {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--secondary-text);
+        }
+
+        .requirements-card {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .requirements-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .requirement-item {
+            margin-bottom: 20px;
+        }
+
+        .requirement-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .requirement-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-color);
+        }
+
+        .requirement-text {
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--secondary-text);
+        }
+
+        .content-area {
+            min-width: 0;
+        }
+
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .dev-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+
+        .app-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .app-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: var(--secondary-text);
+            margin-bottom: 32px;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            align-items: start;
+        }
+
+        body.dark-mode .warning-box {
+            background: rgba(255, 193, 7, 0.15);
+            border-color: rgba(255, 193, 7, 0.3);
+        }
+
+        .warning-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .warning-content {
+            flex: 1;
+        }
+
+        .warning-content h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #856404;
+        }
+
+        body.dark-mode .warning-content h3 {
+            color: #ffc107;
+        }
+
+        .warning-content p {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #856404;
+            margin-bottom: 8px;
+        }
+
+        body.dark-mode .warning-content p {
+            color: #ffc107;
+        }
+
+        .warning-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .warning-list li {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #856404;
+            margin-bottom: 6px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        body.dark-mode .warning-list li {
+            color: #ffc107;
+        }
+
+        .warning-list li:before {
+            content: "•";
+            position: absolute;
+            left: 6px;
+            font-weight: bold;
+        }
+
+        .download-card {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .download-card:hover {
+            background: var(--hover-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+
+        .download-header {
+            margin-bottom: 16px;
+        }
+
+        .download-info h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .version-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .download-meta {
+            display: flex;
+            gap: 16px;
+            color: var(--secondary-text);
+            font-size: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 14px 24px;
+            background: var(--text-color);
+            color: var(--bg-color);
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .download-btn:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+        }
+
+        .download-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .discord-section {
+            margin-top: 40px;
+            text-align: center;
+            padding: 28px;
+            background: var(--input-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .discord-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .discord-description {
+            font-size: 13px;
+            color: var(--secondary-text);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .discord-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: #5865F2;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .discord-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            text-align: center;
+            padding: 28px 24px;
+            color: var(--secondary-text);
+            font-size: 12px;
+            border-top: 0.5px solid var(--border-color);
+            margin-top: 60px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .sidebar {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-desktop {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+            }
+
+            .main-content {
+                padding: 32px 20px;
+            }
+
+            .download-card {
+                padding: 20px;
+            }
+
+            .download-info h2 {
+                font-size: 18px;
+            }
+
+            .discord-section {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="" class="logo">
+            <div class="logo-icon">
+                <img src="img/SubGames.png" alt="SubGames Logo">
+            </div>
+            <span>SubGames</span>
+        </a>
+
+        <nav class="nav-desktop">
+            <a href="baixar_manifest.html">Web</a>
+            <a href="app.html" class="active">App/Plugin</a>
+            <a href="index.html">Atualizações</a>
+            <a href="instrcoes.html">Como Baixar</a>
+            <a href="suporte.html">Suporte</a>
+        </nav>
+
+        <div class="user-info">
+            <div class="theme-toggle" onclick="toggleTheme()">
+                <div class="theme-toggle-slider"></div>
+            </div>
+        </div>
+
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <nav class="nav-mobile" id="mobileNav">
+        <a href="baixar_manifest.html">Web</a>
+        <a href="app.html">App/Plugin</a>
+        <a href="index.html">Atualizações</a>
+        <a href="instrcoes.html">Como Baixar</a>
+        <a href="suporte.html">Suporte</a>
+    </nav>
+
+    <div class="main-content">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="alpha-badge-large">
+                <h3>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                    Versão Alpha
+                </h3>
+                <p>Este plugin está em desenvolvimento ativo. Podem ocorrer erros e instabilidades.</p>
+            </div>
+
+            <div class="requirements-card">
+                <h3>Requisitos do Sistema</h3>
+                
+                <div class="requirement-item">
+                    <div class="requirement-title">Sistema Compatível</div>
+                    <div class="requirement-text">Windows 10/11 (64-bit). O arquivo .exe requer um sistema Windows para funcionar.</div>
+                </div>
+
+                <div class="requirement-item">
+                    <div class="requirement-title">Permissões</div>
+                    <div class="requirement-text">É necessário ter permissão para executar arquivos .exe. Certifique-se de que não há restrições de administrador ou antivírus bloqueando o programa.</div>
+                </div>
+
+                <div class="requirement-item">
+                    <div class="requirement-title">Dependências</div>
+                    <div class="requirement-text">O plugin requer Steam e SteamTools instalados e em execução.</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Hero Section -->
+            <div class="hero-section">
+                <span class="dev-badge">Alpha - Em Desenvolvimento</span>
+                
+                <div class="app-logo">
+                    <img src="img/SubGames.png" alt="SubGames Plugin" onerror="this.parentElement.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'">
+                </div>
+
+                <h1>Plugin SubGames</h1>
+                <p class="subtitle">
+                    Extensão para Steam que integra o SubGames diretamente com sua biblioteca. Requer Steam e SteamTools ativos.
+                </p>
+            </div>
+
+            <!-- Warning Box -->
+            <div class="warning-box">
+                <svg class="warning-icon" viewBox="0 0 24 24" fill="none">
+                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" fill="#ffc107"/>
+                </svg>
+                <div class="warning-content">
+                    <h3>Requisitos Obrigatórios</h3>
+                    <p>Para que o plugin funcione corretamente, você DEVE ter:</p>
+                    <ul class="warning-list">
+                        <li><strong>Steam</strong> instalado e em execução</li>
+                        <li><strong>SteamTools</strong> instalado e em execução</li>
+                        <li>Permissões para executar arquivos .exe no Windows</li>
+                    </ul>
+                    <p style="margin-top: 12px;"><strong>Encontrou problemas?</strong> Reporte à nossa equipa no Discord para ajudarmos a resolver!</p>
+                </div>
+            </div>
+
+            <!-- Download Section -->
+            <div class="download-card">
+                <div class="download-header">
+                    <div class="download-info">
+                        <h2>Plugin SubGames para Windows</h2>
+                        <span class="version-tag">Alpha v0.1 - Experimental</span>
+                    </div>
+                </div>
+
+                <div class="download-meta">
+                    <div class="meta-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="fill: var(--secondary-text);">
+                            <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z" fill="currentColor"/>
+                        </svg>
+                        <span>Windows 10/11</span>
+                    </div>
+                    <div class="meta-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="fill: var(--secondary-text);">
+                            <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" fill="currentColor"/>
+                        </svg>
+                        <span>Dezembro 2025</span>
+                    </div>
+                    <div class="meta-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="fill: var(--secondary-text);">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" fill="currentColor"/>
+                        </svg>
+                        <span>Requer Steam + SteamTools</span>
+                    </div>
+                </div>
+
+                <button class="download-btn" onclick="downloadPlugin()">
+                    <svg class="download-icon" viewBox="0 0 24 24" fill="none">
+                        <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z" fill="currentColor"/>
+                    </svg>
+                    Baixar Plugin Alpha
+                </button>
+            </div>
+
+            <!-- Discord Section -->
+            <div class="discord-section">
+                <div class="discord-title">Suporte & Reportar Problemas</div>
+                <div class="discord-description">
+                    Encontrou algum erro ou bug? Entre no nosso Discord para reportar problemas, receber suporte da equipa e acompanhar o desenvolvimento do plugin.
+                </div>
+                <a href="https://discord.gg/fv4SDzrahy" target="_blank" class="discord-btn">
+                    <svg width="18" height="18" viewBox="0 0 71 55" fill="none">
+                        <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978ZM23.7259 37.3253C20.2276 37.3253 17.3451 34.1136 17.3451 30.1693C17.3451 26.225 20.1717 23.0133 23.7259 23.0133C27.308 23.0133 30.1626 26.2532 30.1066 30.1693C30.1066 34.1136 27.28 37.3253 23.7259 37.3253ZM47.3178 37.3253C43.8196 37.3253 40.9371 34.1136 40.9371 30.1693C40.9371 26.225 43.7636 23.0133 47.3178 23.0133C50.9 23.0133 53.7545 26.2532 53.6986 30.1693C53.6986 34.1136 50.9 37.3253 47.3178 37.3253Z" fill="currentColor"/>
+                    </svg>
+                    Entrar no Discord - Suporte
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        © 2025 SubGames Plugin Alpha v0.1
+    </footer>
+
+    <script>
+        // Tema
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        // Menu Mobile
+        function toggleMenu() {
+            document.querySelector('.hamburger').classList.toggle('active');
+            document.getElementById('mobileNav').classList.toggle('active');
+        }
+
+        // Carregar preferência de tema
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // Download Plugin
+        function downloadPlugin() {
+            // Substitua pelo caminho correto do arquivo do plugin
+            window.location.href = 'SubGames_Download/SG Plugin.zip';
+        }
+    </script>
+</body>
+</html>

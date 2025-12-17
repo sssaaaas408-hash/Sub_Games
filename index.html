@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SubGames - Atualizações</title>
+    <link rel="icon" type="image/png" href="img/SubGames.png">
+    <link rel="shortcut icon" type="image/png" href="img/SubGames.png">
+    <link rel="apple-touch-icon" href="img/SubGames.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --secondary-text: #8e8e93;
+            --input-bg: #f2f2f7;
+            --border-color: #d1d1d6;
+            --hover-bg: #e5e5ea;
+            --card-bg: #ffffff;
+            --accent-color: #007aff;
+        }
+        body.dark-mode {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --secondary-text: #98989d;
+            --input-bg: #1c1c1e;
+            --border-color: #38383a;
+            --hover-bg: #2c2c2e;
+            --card-bg: #1c1c1e;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 0.5px solid var(--border-color);
+            backdrop-filter: blur(20px);
+            background: var(--bg-color);
+        }
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
+            object-fit: cover;
+        }
+        .nav-desktop {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+        .nav-desktop a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 400;
+            transition: opacity 0.2s;
+            opacity: 0.6;
+        }
+        .nav-desktop a:hover {
+            opacity: 1;
+        }
+        .nav-desktop a.active {
+            opacity: 1;
+            font-weight: 500;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        .theme-toggle {
+            width: 51px;
+            height: 31px;
+            background: var(--input-bg);
+            border-radius: 16px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s;
+        }
+        .theme-toggle-slider {
+            width: 27px;
+            height: 27px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+        body.dark-mode .theme-toggle {
+            background: #34c759;
+        }
+        body.dark-mode .theme-toggle-slider {
+            transform: translateX(20px);
+        }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+        .hamburger span {
+            width: 22px;
+            height: 2px;
+            background: var(--text-color);
+            transition: all 0.3s;
+            border-radius: 1px;
+        }
+        .nav-mobile {
+            display: none;
+            position: fixed;
+            top: 65px;
+            left: 0;
+            right: 0;
+            background: var(--bg-color);
+            border-bottom: 0.5px solid var(--border-color);
+            padding: 8px;
+            z-index: 1000;
+        }
+        .nav-mobile.active {
+            display: block;
+        }
+        .nav-mobile a {
+            display: block;
+            padding: 12px 16px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+        .nav-mobile a:hover {
+            background: var(--hover-bg);
+        }
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+        .page-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .page-header h1 {
+            font-size: 34px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+        .page-header p {
+            color: var(--secondary-text);
+            font-size: 17px;
+            line-height: 1.5;
+        }
+        .update-card {
+            background: var(--card-bg);
+            border: 0.5px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: all 0.2s;
+        }
+        .update-card:hover {
+            background: var(--input-bg);
+        }
+        .version-badge {
+            display: inline-block;
+            background: var(--text-color);
+            color: var(--bg-color);
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+        .latest-badge {
+            background: #34c759;
+            color: white;
+        }
+        .update-date {
+            color: var(--secondary-text);
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+        .update-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            letter-spacing: -0.3px;
+        }
+        .update-description {
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            font-size: 15px;
+        }
+        .features-list {
+            margin-top: 24px;
+        }
+        .features-list h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 16px;
+            background: var(--input-bg);
+            border-radius: 12px;
+            transition: background 0.2s;
+        }
+        .feature-item:hover {
+            background: var(--hover-bg);
+        }
+        .feature-text {
+            flex: 1;
+        }
+        .feature-text strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .feature-text span {
+            color: var(--secondary-text);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .comparison-section {
+            margin: 40px 0;
+            padding: 24px;
+            background: var(--input-bg);
+            border-radius: 16px;
+        }
+        .comparison-section h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-top: 16px;
+        }
+        .comparison-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        .comparison-label {
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            background: var(--hover-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .comparison-label.before {
+            color: #ff3b30;
+        }
+        .comparison-label.after {
+            color: #ff3b30;
+        }
+        .comparison-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            background: var(--border-color);
+            display: block;
+        }
+        .comparison-wide {
+            height: 250px;
+        }
+        .comparison-square {
+            height: 400px;
+        }
+        .version-navigation {
+            position: fixed;
+            top: 80px;
+            left: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 999;
+        }
+        .version-button {
+            padding: 10px 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        .version-button:hover {
+            background: var(--hover-bg);
+            border-color: var(--accent-color);
+            transform: translateX(-4px);
+        }
+        .version-button::before {
+            content: '←';
+            font-size: 14px;
+            color: var(--text-color);
+        }
+        .app-comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-top: 24px;
+        }
+        .app-comparison-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        .app-comparison-title {
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            background: var(--hover-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .app-comparison-image {
+            width: 100%;
+            height: 400px;
+            object-fit: contain;
+            background: var(--border-color);
+            display: block;
+            padding: 10px;
+        }
+        .app-tall {
+            height: 500px;
+        }
+        .app-short {
+            height: 300px;
+        }
+        footer {
+            text-align: center;
+            padding: 32px 24px;
+            color: var(--secondary-text);
+            font-size: 13px;
+            border-top: 0.5px solid var(--border-color);
+            margin-top: 80px;
+        }
+        @media (max-width: 768px) {
+            .nav-desktop {
+                display: none;
+            }
+            .hamburger {
+                display: flex;
+            }
+            .page-header h1 {
+                font-size: 28px;
+            }
+            .update-card {
+                padding: 24px;
+            }
+            .update-title {
+                font-size: 22px;
+            }
+            .main-content {
+                padding: 40px 20px;
+            }
+            .comparison-grid,
+            .app-comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            .version-navigation {
+                position: static;
+                margin-top: 32px;
+                margin-bottom: 32px;
+            }
+            .version-button {
+                min-width: 100%;
+            }
+            .app-comparison-image {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="" class="logo">
+            <img src="img/SubGames.png" alt="SubGames" class="logo-icon">
+            <span>SubGames</span>
+        </a>
+        <nav class="nav-desktop">
+            <a href="baixar_manifest.html">Web</a>
+            <a href="app_ou_plugin.html">App/Plugin</a>
+            <a href="index.html" class="active">Atualizações</a>
+            <a href="instrcoes.html">Como Baixar</a>
+            <a href="suporte.html">Suporte</a>
+        </nav>
+        <div class="user-info">
+            <div class="theme-toggle" onclick="toggleTheme()">
+                <div class="theme-toggle-slider"></div>
+            </div>
+        </div>
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+    <nav class="nav-mobile" id="mobileNav">
+        <a href="baixar_manifest.html">Web</a>
+        <a href="app_ou_plugin.html">App</a>
+        <a href="index.html">Atualizações</a>
+        <a href="instrcoes.html">Como Baixar</a>
+        <a href="suporte.html">Suporte</a>
+    </nav>
+    <div class="main-content">
+        <div class="version-navigation">
+            <a href="AT_1.1.html" class="version-button">v1.1</a>
+            <a href="AT_1.0.html" class="version-button">v1.0</a>
+        </div>
+        <div class="page-header">
+            <h1>Atualizações</h1>
+            <p>Fique por dentro de todas as novidades e melhorias do SubGames</p>
+        </div>
+        <div class="update-card">
+            <span class="version-badge latest-badge">Versão 1.2 - Mais Recente</span>
+            <div class="update-date">14 de Dezembro de 2025</div>
+            <h2 class="update-title">Expansão Épica: +400 Jogos e SubGames Plugin!</h2>
+            <p class="update-description">
+                A versão 1.2 representa um salto gigantesco para o SubGames! Expandimos drasticamente 
+                nossa biblioteca com mais de 400 novos jogos, lançamos o SubGames Plugin, 
+                renovamos completamente o design do site e do aplicativo, e criamos um novo servidor 
+                Discord ainda mais completo. Esta é a maior atualização de conteúdo da plataforma até agora!
+            </p>
+
+            <div class="features-list">
+                <h3>Novidades Principais</h3>
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>+400 Novos Jogos Adicionados</strong>
+                        <span>Expansão massiva da biblioteca com títulos AAA, indies, clássicos e lançamentos recentes</span>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>SubGames Plugin Lançado</strong>
+                        <span>Plugin automatizado que integra Manifest do SubGames diretamente no seu desktop Steam</span>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Novo Design do App</strong>
+                        <span>Interface completamente redesenhada com navegação mais intuitiva</span>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Sistema de Tags na Página Manifest</strong>
+                        <span>Organize e encontre jogos facilmente com tags de gênero</span>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Novo Servidor Discord</strong>
+                        <span>Servidor Discord completamente reestruturado com mais canais e bots de utilidade</span>
+                    </div>
+                </div>
+            </div>
+            <p class="update-description" style="margin-top: 40px;">
+                <strong>Instale o SubGames Plugin:</strong> Acesse a aba "App/Plugin" para fazer o download 
+                do plugin e aproveitar todas as funcionalidades de integração!
+            </p>
+            <p class="update-description">
+                <strong>Junte-se ao Novo Discord:</strong> Entre no nosso servidor Discord reformulado!
+            </p>
+        </div>
+    </div>
+    <footer>
+        © 2025 SubGames v1.2
+    </footer>
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+        function toggleMenu() {
+            document.querySelector('.hamburger').classList.toggle('active');
+            document.getElementById('mobileNav').classList.toggle('active');
+        }
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+</body>
+</html>

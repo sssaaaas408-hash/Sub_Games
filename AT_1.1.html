@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SubGames - Versão 1.1</title>
+    <link rel="icon" type="image/png" href="img/SubGames.png">
+    <link rel="shortcut icon" type="image/png" href="img/SubGames.png">
+    <link rel="apple-touch-icon" href="img/SubGames.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --secondary-text: #8e8e93;
+            --input-bg: #f2f2f7;
+            --border-color: #d1d1d6;
+            --hover-bg: #e5e5ea;
+            --card-bg: #ffffff;
+            --accent-color: #007aff;
+        }
+
+        body.dark-mode {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --secondary-text: #98989d;
+            --input-bg: #1c1c1e;
+            --border-color: #38383a;
+            --hover-bg: #2c2c2e;
+            --card-bg: #1c1c1e;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 0.5px solid var(--border-color);
+            backdrop-filter: blur(20px);
+            background: var(--bg-color);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
+            object-fit: cover;
+        }
+
+        .nav-desktop {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-desktop a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 400;
+            transition: opacity 0.2s;
+            opacity: 0.6;
+        }
+
+        .nav-desktop a:hover {
+            opacity: 1;
+        }
+
+        .nav-desktop a.active {
+            opacity: 1;
+            font-weight: 500;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            width: 51px;
+            height: 31px;
+            background: var(--input-bg);
+            border-radius: 16px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        .theme-toggle-slider {
+            width: 27px;
+            height: 27px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+
+        body.dark-mode .theme-toggle {
+            background: #34c759;
+        }
+
+        body.dark-mode .theme-toggle-slider {
+            transform: translateX(20px);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            width: 22px;
+            height: 2px;
+            background: var(--text-color);
+            transition: all 0.3s;
+            border-radius: 1px;
+        }
+
+        .nav-mobile {
+            display: none;
+            position: fixed;
+            top: 65px;
+            left: 0;
+            right: 0;
+            background: var(--bg-color);
+            border-bottom: 0.5px solid var(--border-color);
+            padding: 8px;
+            z-index: 1000;
+        }
+
+        .nav-mobile.active {
+            display: block;
+        }
+
+        .nav-mobile a {
+            display: block;
+            padding: 12px 16px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .nav-mobile a:hover {
+            background: var(--hover-bg);
+        }
+
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 32px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .back-button:hover {
+            background: var(--input-bg);
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .page-header h1 {
+            font-size: 34px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .page-header p {
+            color: var(--secondary-text);
+            font-size: 17px;
+            line-height: 1.5;
+        }
+
+        .update-card {
+            background: var(--card-bg);
+            border: 0.5px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: all 0.2s;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: #ff3b30;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .update-date {
+            color: var(--secondary-text);
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        .update-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            letter-spacing: -0.3px;
+        }
+
+        .update-description {
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            font-size: 15px;
+        }
+
+        .features-list {
+            margin-top: 24px;
+        }
+
+        .features-list h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 16px;
+            background: var(--input-bg);
+            border-radius: 12px;
+            transition: background 0.2s;
+        }
+
+        .feature-item:hover {
+            background: var(--hover-bg);
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        .feature-text strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .feature-text span {
+            color: var(--secondary-text);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .comparison-section {
+            margin: 40px 0;
+            padding: 24px;
+            background: var(--input-bg);
+            border-radius: 16px;
+        }
+
+        .comparison-section h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .comparison-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .comparison-label {
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            background: var(--hover-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comparison-label.before {
+            color: #ff3b30;
+        }
+
+        .comparison-label.after {
+            color: #ff3b30;
+        }
+
+        .comparison-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: var(--border-color);
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            padding: 32px 24px;
+            color: var(--secondary-text);
+            font-size: 13px;
+            border-top: 0.5px solid var(--border-color);
+            margin-top: 80px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-desktop {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .page-header h1 {
+                font-size: 28px;
+            }
+
+            .update-card {
+                padding: 24px;
+            }
+
+            .update-title {
+                font-size: 22px;
+            }
+
+            .main-content {
+                padding: 40px 20px;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo">
+            <img src="img/SubGames.png" alt="SubGames" class="logo-icon">
+            <span>SubGames</span>
+        </a>
+
+        <nav class="nav-desktop">
+            <a href="baixar_manifest.html">Web</a>
+            <a href="app_ou_plugin.html">App/Plugin</a>
+            <a href="index.html" class="active">Atualizações</a>
+            <a href="instrcoes.html">Como Baixar</a>
+            <a href="suporte.html">Suporte</a>
+        </nav>
+
+        <div class="user-info">
+            <div class="theme-toggle" onclick="toggleTheme()">
+                <div class="theme-toggle-slider"></div>
+            </div>
+        </div>
+
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <nav class="nav-mobile" id="mobileNav">
+        <a href="baixar_manifest.html">Web</a>
+        <a href="app_ou_plugin.html">App</a>
+        <a href="index.html">Atualizações</a>
+        <a href="instrcoes.html">Como Baixar</a>
+        <a href="suporte.html">Suporte</a>
+    </nav>
+
+    <div class="main-content">
+        <a href="index.html" class="back-button">
+            ← Voltar para Atualizações
+        </a>
+
+        <div class="page-header">
+            <h1>Versão 1.1</h1>
+            <p>Grande Atualização: Nova Interface e Aplicativo!</p>
+        </div>
+
+        <div class="update-card">
+            <span class="version-badge">Versão 1.1</span>
+            <div class="update-date">28 de Novembro de 2025</div>
+            <h2 class="update-title">Grande Atualização: Nova Interface e Aplicativo!</h2>
+            <p class="update-description">
+                A versão 1.1 traz mudanças significativas para o SubGames! Renovamos completamente 
+                a interface web, lançamos o aplicativo oficial e implementamos diversos recursos 
+                que a comunidade pediu. Esta é a maior atualização desde o lançamento da plataforma!
+            </p>
+
+            <div class="comparison-section">
+                <h3>Nova Interface Web</h3>
+                <p class="update-description" style="text-align: center; margin-bottom: 20px;">
+                    Redesenhamos completamente a interface para proporcionar uma experiência mais moderna e intuitiva
+                </p>
+                <div class="comparison-grid">
+                    <div class="comparison-item">
+                        <div class="comparison-label before">Antes (v1.0)</div>
+                        <img src="img/Web1.png" alt="Interface Antiga" class="comparison-image" onerror="this.style.display='none'">
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-label after">Depois (v1.1)</div>
+                        <img src="img/Web2.png" alt="Interface Nova" class="comparison-image" onerror="this.style.display='none'">
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-list">
+                <h3>Novidades Principais</h3>
+                
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Nova Interface Web</strong>
+                        <span>Design completamente renovado com melhor organização, cards mais atraentes e experiência de usuário aprimorada</span>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Nova Logo Oficial</strong>
+                        <span>Logo redesenhada profissionalmente por zark2.0_, trazendo uma identidade visual moderna e marcante para o SubGames</span>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Lançamento do Aplicativo</strong>
+                        <span>Aplicativo oficial do SubGames disponível para download com todas as funcionalidades da versão web</span>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Sistema Online Fix Integrado</strong>
+                        <span>Online Fix agora disponível diretamente dentro do aplicativo, facilitando a ativação de jogos multiplayer</span>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Sistema de Configurações</strong>
+                        <span>Novo painel de configurações no aplicativo para personalizar sua experiência</span>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Sistema de Notificações</strong>
+                        <span>Alertas automáticos dentro do app sempre que houver novas atualizações disponíveis</span>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Nova Base de Dados</strong>
+                        <span>Migração para infraestrutura mais robusta e rápida, melhorando velocidade de downloads</span>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Novo Servidor Discord</strong>
+                        <span>Servidor Discord dedicado exclusivamente ao SubGames com canais organizados e suporte dedicado</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-list" style="margin-top: 40px;">
+                <h3>Melhorias e Otimizações</h3>
+                
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Remoção da Aba Biblioteca</strong>
+                        <span>Removemos a aba Biblioteca para simplificar a navegação, focando na experiência de download direto</span>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Performance Aprimorada</strong>
+                        <span>Carregamento de páginas até 40% mais rápido e melhor gestão de memória no aplicativo</span>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Interface Mais Responsiva</strong>
+                        <span>Melhor adaptação para diferentes tamanhos de tela e dispositivos móveis</span>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Sistema de Busca Melhorado</strong>
+                        <span>Busca mais rápida e precisa com sugestões em tempo real</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-list" style="margin-top: 40px;">
+                <h3>Correções de Bugs</h3>
+                
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Corrigido problema de downloads interrompidos</strong>
+                        <span>Downloads agora são mais estáveis e menos propensos a falhas</span>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Resolvido erro de autenticação</strong>
+                        <span>Problemas com login do Discord foram completamente resolvidos</span>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Corrigido tema escuro em certos elementos</strong>
+                        <span>Todos os elementos agora respeitam corretamente o tema selecionado</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-list" style="margin-top: 40px;">
+                <h3>Agradecimentos</h3>
+                
+                <div class="feature-item">
+                    <div class="feature-text">
+                        <strong>Design da Logo</strong>
+                        <span>Agradecimento especial a zark2.0_ pela criação da nova logo profissional do SubGames</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        © 2025 SubGames v1.1
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        function toggleMenu() {
+            document.querySelector('.hamburger').classList.toggle('active');
+            document.getElementById('mobileNav').classList.toggle('active');
+        }
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+</body>
+</html>

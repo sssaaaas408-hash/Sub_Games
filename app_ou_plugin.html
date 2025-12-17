@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SubGames - Downloads</title>
+    <link rel="icon" type="image/png" href="img/SubGames_curva.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --secondary-text: #8e8e93;
+            --input-bg: #f2f2f7;
+            --border-color: #d1d1d6;
+            --hover-bg: #e5e5ea;
+            --accent-color: #007aff;
+        }
+
+        body.dark-mode {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --secondary-text: #98989d;
+            --input-bg: #1c1c1e;
+            --border-color: #38383a;
+            --hover-bg: #2c2c2e;
+            --accent-color: #0a84ff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 0.5px solid var(--border-color);
+            backdrop-filter: blur(20px);
+            background: var(--bg-color);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .nav-desktop {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-desktop a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 400;
+            transition: opacity 0.2s;
+            opacity: 0.6;
+        }
+
+        .nav-desktop a:hover {
+            opacity: 1;
+        }
+
+        .nav-desktop a.active {
+            opacity: 1;
+            font-weight: 500;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .theme-toggle {
+            width: 51px;
+            height: 31px;
+            background: var(--input-bg);
+            border-radius: 16px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        .theme-toggle-slider {
+            width: 27px;
+            height: 27px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+
+        body.dark-mode .theme-toggle {
+            background: #34c759;
+        }
+
+        body.dark-mode .theme-toggle-slider {
+            transform: translateX(20px);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            width: 22px;
+            height: 2px;
+            background: var(--text-color);
+            transition: all 0.3s;
+            border-radius: 1px;
+        }
+
+        .nav-mobile {
+            display: none;
+            position: fixed;
+            top: 65px;
+            left: 0;
+            right: 0;
+            background: var(--bg-color);
+            border-bottom: 0.5px solid var(--border-color);
+            padding: 8px;
+            z-index: 1000;
+        }
+
+        .nav-mobile.active {
+            display: block;
+        }
+
+        .nav-mobile a {
+            display: block;
+            padding: 12px 16px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .nav-mobile a:hover {
+            background: var(--hover-bg);
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .page-subtitle {
+            font-size: 15px;
+            color: var(--secondary-text);
+            line-height: 1.5;
+        }
+
+        .download-section {
+            margin-bottom: 32px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .download-card {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+
+        .download-card:hover {
+            background: var(--hover-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--text-color);
+            color: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .card-title-section {
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .card-platform {
+            font-size: 12px;
+            color: var(--secondary-text);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-description {
+            font-size: 13px;
+            color: var(--secondary-text);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-color);
+        }
+
+        .feature-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #34c759;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .feature-icon.warning {
+            background: #ff9500;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 14px 24px;
+            background: var(--text-color);
+            color: var(--bg-color);
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .download-btn:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+        }
+
+        .info-box {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 32px;
+        }
+
+        .info-box-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .info-box-text {
+            font-size: 13px;
+            color: var(--secondary-text);
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 28px 24px;
+            color: var(--secondary-text);
+            font-size: 12px;
+            border-top: 0.5px solid var(--border-color);
+            margin-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-desktop {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .main-content {
+                padding: 32px 20px;
+            }
+
+            .download-section {
+                grid-template-columns: 1fr;
+            }
+
+            .download-card {
+                padding: 24px;
+            }
+
+            .card-header {
+                flex-direction: row;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="" class="logo">
+            <div class="logo-icon">
+                <img src="img/SubGames.png" alt="SubGames Logo">
+            </div>
+            <span>SubGames</span>
+        </a>
+
+        <nav class="nav-desktop">
+            <a href="baixar_manifest.html">Web</a>
+            <a href="app_ou_plugin.html" class="active">App/Plugin</a>
+            <a href="index.html">Atualizações</a>
+            <a href="instrcoes.html">Como Baixar</a>
+            <a href="suporte.html">Suporte</a>
+        </nav>
+
+        <div class="user-info">
+            <div class="theme-toggle" onclick="toggleTheme()">
+                <div class="theme-toggle-slider"></div>
+            </div>
+        </div>
+
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <nav class="nav-mobile" id="mobileNav">
+        <a href="baixar_manifest.html">Web</a>
+        <a href="app_ou_plugin.html">App</a>
+        <a href="index.html">Atualizações</a>
+        <a href="instrcoes.html">Como Baixar</a>
+        <a href="suporte.html">Suporte</a>
+    </nav>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Downloads SubGames</h1>
+            <p class="page-subtitle">Escolhe a versão que melhor se adapta às tuas necessidades</p>
+        </div>
+
+        <div class="download-section">
+            <!-- SG Plugin -->
+            <div class="download-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="card-title-section">
+                        <h2 class="card-title">Baixar SG Plugin</h2>
+                        <div class="card-platform">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/>
+                            </svg>
+                            <span>Windows 10/11</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="card-description">
+                    Plugin que instala manifest automaticamente mas sem online fix integrado ainda.
+                </p>
+
+                <div class="features">
+                    <div class="feature-item">
+                        <div class="feature-icon">✓</div>
+                        <span>Instalação automática do manifest</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">✓</div>
+                        <span>Configuração simplificada</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon warning">!</div>
+                        <span>Online fix não incluído (será adicionado em breve)</span>
+                    </div>
+                </div>
+
+                <a href="Plugin.html" class="download-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z" fill="currentColor"/>
+                    </svg>
+                    Baixar Plugin
+                </a>
+            </div>
+
+            <!-- SG App -->
+            <div class="download-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="card-title-section">
+                        <h2 class="card-title">Baixar SG App</h2>
+                        <div class="card-platform">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/>
+                            </svg>
+                            <span>Windows 10/11</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="card-description">
+                    Não implementa manifest nem online fix automaticamente, mas podes baixá-los manualmente e adicionar (esse já tem online fix integrado).
+                </p>
+
+                <div class="features">
+                    <div class="feature-item">
+                        <div class="feature-icon">✓</div>
+                        <span>Online fix já integrado</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">✓</div>
+                        <span>Controlo total sobre as configurações</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon warning">!</div>
+                        <span>Requer instalação manual do manifest e do Online Fix</span>
+                    </div>
+                </div>
+
+                <a href="App.html" class="download-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z" fill="currentColor"/>
+                    </svg>
+                    Baixar App
+                </a>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <div class="info-box-title">Qual devo escolher?</div>
+            <p class="info-box-text">
+                Se procuras simplicidade e instalação rápida, escolhe o <strong>SG Plugin</strong>. Se preferes ter mais controlo e já tens o online fix integrado, escolhe o <strong>SG App</strong>.
+            </p>
+        </div>
+    </div>
+
+    <footer>
+        © 2025 SubGames v1.0
+    </footer>
+
+    <script>
+        // Tema
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('appTheme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        // Menu Mobile
+        function toggleMenu() {
+            document.querySelector('.hamburger').classList.toggle('active');
+            document.getElementById('mobileNav').classList.toggle('active');
+        }
+
+        // Carregar preferência de tema
+        if (localStorage.getItem('appTheme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+</body>
+</html>

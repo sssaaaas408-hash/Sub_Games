@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SubGames</title>
+     <link rel="icon" type="image/png" href="img/SubGames_curva.png">
+    <link rel="shortcut icon" type="image/png" href="img/SubGames_curva.png">
+    <link rel="apple-touch-icon" href="img/SubGames_curva.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --secondary-text: #8e8e93;
+            --input-bg: #f2f2f7;
+            --border-color: #d1d1d6;
+            --hover-bg: #e5e5ea;
+            --accent-color: #007aff;
+            --success-color: #34c759;
+        }
+
+        body.dark-mode {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --secondary-text: #98989d;
+            --input-bg: #1c1c1e;
+            --border-color: #38383a;
+            --hover-bg: #2c2c2e;
+            --accent-color: #0a84ff;
+            --success-color: #30d158;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 0.5px solid var(--border-color);
+            backdrop-filter: blur(20px);
+            background: var(--bg-color);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .nav-desktop {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-desktop a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 400;
+            transition: opacity 0.2s;
+            opacity: 0.6;
+        }
+
+        .nav-desktop a:hover {
+            opacity: 1;
+        }
+
+        .nav-desktop a.active {
+            opacity: 1;
+            font-weight: 500;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .theme-toggle {
+            width: 51px;
+            height: 31px;
+            background: var(--input-bg);
+            border-radius: 16px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        .theme-toggle-slider {
+            width: 27px;
+            height: 27px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+
+        body.dark-mode .theme-toggle {
+            background: #34c759;
+        }
+
+        body.dark-mode .theme-toggle-slider {
+            transform: translateX(20px);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            width: 22px;
+            height: 2px;
+            background: var(--text-color);
+            transition: all 0.3s;
+            border-radius: 1px;
+        }
+
+        .nav-mobile {
+            display: none;
+            position: fixed;
+            top: 65px;
+            left: 0;
+            right: 0;
+            background: var(--bg-color);
+            border-bottom: 0.5px solid var(--border-color);
+            padding: 8px;
+            z-index: 1000;
+        }
+
+        .nav-mobile.active {
+            display: block;
+        }
+
+        .nav-mobile a {
+            display: block;
+            padding: 12px 16px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .nav-mobile a:hover {
+            background: var(--hover-bg);
+        }
+
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .page-subtitle {
+            font-size: 20px;
+            color: var(--secondary-text);
+            line-height: 1.6;
+        }
+
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .step {
+            display: flex;
+            gap: 24px;
+            padding: 32px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .step:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .step-number {
+            width: 56px;
+            height: 56px;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .step-description {
+            font-size: 16px;
+            color: var(--secondary-text);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .step-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--text-color);
+            color: var(--bg-color);
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .step-button:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .step-button svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .step-note {
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: var(--bg-color);
+            border-left: 3px solid var(--accent-color);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--secondary-text);
+        }
+
+        .final-message {
+            text-align: center;
+            padding: 40px 32px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            margin-top: 48px;
+        }
+
+        .final-message-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 24px;
+            color: var(--success-color);
+        }
+
+        .final-message h2 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .final-message p {
+            font-size: 16px;
+            color: var(--secondary-text);
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 32px 24px;
+            color: var(--secondary-text);
+            font-size: 13px;
+            border-top: 0.5px solid var(--border-color);
+            margin-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-desktop {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            .page-subtitle {
+                font-size: 17px;
+            }
+
+            .step {
+                flex-direction: column;
+                padding: 24px;
+            }
+
+            .step-number {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
+
+            .step-title {
+                font-size: 20px;
+            }
+
+            .step-description {
+                font-size: 15px;
+            }
+
+            .main-content {
+                padding: 40px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="" class="logo">
+            <div class="logo-icon">
+                <img src="img/SubGames.png" alt="SubGames Logo">
+            </div>
+            <span>SubGames</span>
+        </a>
+
+        <nav class="nav-desktop">
+            <a href="baixar_manifest.html">Web</a>
+              <a href="app_ou_plugin.html">App/Plugin</a>
+            <a href="index.html">Atualizações</a>
+             <a href="instrcoes.html" class="active">Como Baixar</a>
+            <a href="suporte.html">Suporte</a>
+        </nav>
+
+        <div class="user-info">
+            <div class="theme-toggle" onclick="toggleTheme()">
+                <div class="theme-toggle-slider"></div>
+            </div>
+        </div>
+
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <nav class="nav-mobile" id="mobileNav">
+        <a href="Baixar_Manifest.html">Web</a>
+          <a href="app_ou_plugin.html">App</a>
+  
+        <a href="index.html">Atualizações</a>
+     
+         <a href="instrcoes.html" class="active">Como Baixar</a>
+        <a href="suporte.html">Suporte</a>
+    </nav>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1>Como Baixar Jogos</h1>
+            <p class="page-subtitle">
+                Siga este guia passo a passo para começar a baixar seus jogos favoritos usando o SubGames
+            </p>
+        </div>
+
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">Baixar o Steam Tools</div>
+                    <div class="step-description">
+                        Primeiro, você precisa baixar e instalar o Steam Tools. Esta ferramenta é essencial para gerenciar os manifests dos jogos.
+                    </div>
+                    <a href="https://steamtools.net/res/st-setup-1.8.17r2.exe" target="_blank" class="step-button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Baixar Steam Tools
+                    </a>
+                    <div class="step-note">
+                        Após baixar, extraia o arquivo e execute o Steam Tools. Certifique-se de ter o Steam instalado no seu computador.
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">Baixar o ZIP do Jogo</div>
+                    <div class="step-description">
+                        Use a página Web do SubGames para baixar o arquivo ZIP contendo os manifests do jogo que você deseja. Digite o código do jogo e escolha a versão SAN 1.0 ou 1.1 BETA.
+                    </div>
+                    <a href="Baixar_Manifest.html" class="step-button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Ir para Downloads
+                    </a>
+                    <div class="step-note">
+                        Após o download, extraia o arquivo ZIP em uma pasta de fácil acesso. Você verá vários arquivos .manifest dentro da pasta.
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">Arrastar os Manifests</div>
+                    <div class="step-description">
+                        Abra o Steam Tools e arraste todos os arquivos .manifest que você extraiu do ZIP para dentro da janela do Steam Tools. Os arquivos serão automaticamente reconhecidos.
+                    </div>
+                    <div class="step-note">
+                        Certifique-se de arrastar TODOS os arquivos .manifest de uma vez. O Steam Tools irá detectá-los e prepará-los para download.
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <div class="step-title">Reiniciar o Steam Tools</div>
+                    <div class="step-description">
+                        Após adicionar os manifests, feche completamente o Steam Tools e abra novamente. Isso garantirá que todos os arquivos sejam carregados corretamente e o download possa começar.
+                    </div>
+                    <div class="step-note">
+                        Após reiniciar, os jogos devem aparecer na sua lista e começar a baixar automaticamente. Aguarde o download finalizar e aproveite!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="final-message">
+            <div class="final-message-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+            </div>
+            <h2>Pronto!</h2>
+            <p>
+                Agora você já sabe como baixar jogos usando o SubGames. Se tiver alguma dúvida, visite nossa seção de suporte ou entre no nosso servidor Discord para obter ajuda da comunidade.
+            </p>
+        </div>
+    </div>
+
+    <footer>
+        © 2025 SANstudios | SubGames Beta
+    </footer>
+
+    <script>
+        // Tema
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        // Menu Mobile
+        function toggleMenu() {
+            document.querySelector('.hamburger').classList.toggle('active');
+            document.getElementById('mobileNav').classList.toggle('active');
+        }
+
+        // Carregar preferência de tema
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+</body>
+</html>
